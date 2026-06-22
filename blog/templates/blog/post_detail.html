@@ -1,0 +1,80 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+{{ post.title }}
+{% endblock %}
+
+{% block content %}
+
+<div class="card">
+
+    <div class="card-body">
+
+        <h1>{{ post.title }}</h1>
+
+        <p class="text-muted">
+            By {{ post.author.username }}
+        </p>
+
+        {% if post.cover_image %}
+            <img src="{{ post.cover_image.url }}"
+                 class="img-fluid mb-3">
+        {% endif %}
+
+        <p>
+            {{ post.content }}
+        </p>
+
+    </div>
+
+</div>
+
+<hr>
+
+<h3>Comments</h3>
+
+{% for comment in comments %}
+
+<div class="card mb-2">
+    <div class="card-body">
+        <strong>{{ comment.author.username }}</strong>
+        <p>{{ comment.body }}</p>
+    </div>
+</div>
+
+{% empty %}
+
+<p>No comments yet.</p>
+
+{% endfor %}
+
+{% if user.is_authenticated %}
+
+<h4>Add Comment</h4>
+
+<form method="post"
+      action="{% url 'add_comment' post.slug %}">
+
+    {% csrf_token %}
+
+    {{ comment_form.as_p }}
+
+    <button type="submit"
+            class="btn btn-primary">
+        Submit Comment
+    </button>
+
+</form>
+
+{% else %}
+
+<p>
+    <a href="{% url 'login' %}">
+        Login
+    </a>
+    to add a comment.
+</p>
+
+{% endif %}
+
+{% endblock %}
